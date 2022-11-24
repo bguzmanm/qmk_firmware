@@ -69,17 +69,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = { // Las keycodes e
                                    '--------------------------------'       '----------------------------------'
     */
 
-    [_MACOS] = LAYOUT_split_3x6_3(
-        //  .-----------------------------------------------------.                    .-----------------------------------------------------.
-        KC_ESC, KC_Q, KC_W, MAC_E, KC_R, KC_T, KC_Y, MAC_U, MAC_I, MAC_O, KC_P, KC_BSPC,
-        //  |--------+--------+--------+--------+--------+--------|    /* _MACOS */    |--------+--------+--------+--------+--------+--------|
-        LSFT_T(KC_LPRN), MAC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_PLUS, RSFT_T(LSA(KC_SLASH)),
-        //  |--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-        LCTL_T(KC_LABK), KC_Z, KC_X, KC_C, KC_V, KC_B, MAC_N, KC_M, KC_COMM, KC_DOT, KC_MINUS, KC_QUOTE,
-        //  '--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------'
-        MT(KC_LCMD, KC_TAB), MT(SYMB, CMDTAB), KC_SPC, KC_ENT, MT(NUMP, KC_ENT), RALT_T(KC_CAPS)
-        //'--------------------------'  '--------------------------------'
-        ),
+  [_MACOS] = LAYOUT_split_3x6_3(
+//  .-----------------------------------------------------.                    .-----------------------------------------------------.
+     KC_ESC,   KC_Q,    KC_W,    MAC_E,    KC_R,    KC_T,                        KC_Y,    MAC_U,   MAC_I,  MAC_O,   KC_P,  KC_BSPC,
+//  |--------+--------+--------+--------+--------+--------|    /* _MACOS */    |--------+--------+--------+--------+--------+--------|
+LSFT_T(KC_LPRN), MAC_A,  KC_S,    KC_D,    KC_F,    KC_G,                        KC_H,    KC_J,    KC_K,  KC_L,  KC_PLUS, RSFT_T(LSA(KC_SLASH)),
+//  |--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+LCTL_T(KC_LABK), KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                        MAC_N,   KC_M, KC_COMM,  KC_DOT, KC_MINUS,  KC_QUOTE,
+//  '--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------'
+                        MT(KC_LCMD, KC_TAB), MT(SYMB, CMDTAB), KC_SPC,    KC_ENT, MT(NUMP, KC_ENT), KC_ALGR
+                                      //'--------------------------'  '--------------------------------'
+  ),
 
     /*
           .------------------------------------------------.                         .-------------------------------------------------.
@@ -133,7 +133,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = { // Las keycodes e
           .------------------------------------------------.                         .-------------------------------------------------.
           |   F1   |    F2 |    F3 |    F4 |   F5  |  F6   |                         |   F7  |   F8  |   F9  |  F10  |  F11  |   F12   |
           |--------+-------+-------+-------+-------+-------|          _TUNE          |-------+-------+-------+-------+-------+---------|
-          |  TOG   |  HUI  | PLAIN |BREATH | RMOOD | RSWIRL|                         |       | MUTE  | VOLD  | VOLU  |       |         |
+          |  TOG   |  HUI  | PLAIN |BREATH | RMOOD | RSWIRL|                         | PREV  | MUTE  | VOLD  | VOLU  |  PLAY |  NEXT   |
           |--------+-------+-------+-------+-------+-------|                         |-------+-------+-------+-------+-------+---------|
           |        |  HUD  |       |       |       |       |                         |       |       |       |       |       |         |
           '---------------------------------------------------------|       |----------------------------------------------------------'
@@ -145,7 +145,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = { // Las keycodes e
         //  .-----------------------------------------------------.                    .-----------------------------------------------------.
         KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12,
         //  |--------+--------+--------+--------+--------+--------|     /* _TUNE */    |--------+--------+--------+--------+--------+--------|
-        RGB_TOG, HUI, RGB_M_P, RGB_M_B, RGB_M_R, RGB_M_SW, XXXXXXX, KC_MUTE, KC_VOLD, KC_VOLU, UC(0x00BB), XXXXXXX,
+        RGB_TOG, HUI, RGB_M_P, RGB_M_B, RGB_M_R, RGB_M_SW, KC_MPRV, KC_MUTE, KC_VOLD, KC_VOLU, KC_MPLY, KC_MNXT,
         //  |--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
         XXXXXXX, HUD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
         //  '--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------'
@@ -187,7 +187,7 @@ void keyboard_post_init_user(void) {
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
         case _TUNE:
-            rgblight_sethsv(104, 255, current_val); // color blanco para los LEDs en capa _TUNE
+            rgblight_sethsv(HSV_GREEN); // color gris para los LEDs en capa _TUNE
             break;
 
         case _NUMP:
@@ -195,7 +195,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
             break;
 
         case _SYMB:
-            rgblight_sethsv(245, 255, current_val);
+            rgblight_sethsv(HSV_PURPLE); 
             // color verde para los LEDs en capa _SYMB
             // valor Hue 245 entrega color rosado
             // 255 es el valor Saturation para todos los colores excepto para el blanco
@@ -205,11 +205,13 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
         case _MACOS:
             if (host_keyboard_led_state().caps_lock) { // si CAPSLOCK (bloq mayus) esta activado
+                // rgblight_sethsv(18, 255, current_val);
                 rgblight_sethsv(18, 255, current_val);
-                // color amarillo para los LEDs
+                // color verde para los LEDs
                 // valor Hue 18 entrega color amarillo
             } else { // si CAPSLOCK (bloq mayus) no esta activado
-                rgblight_sethsv(current_hue, 255, current_val);
+                // rgblight_sethsv(current_hue, 255, current_val);
+                rgblight_sethsv(HSV_BLUE);
                 // entonces asignar este color a los LEDs para la capa _BASE
                 // valor Hue current_hue el cual puede ser modificado con los keycodes HUI y HUD en la capa _TUNE
                 // HUI aumenta en 5 el valor Hue y HUD lo disminuye en 5
