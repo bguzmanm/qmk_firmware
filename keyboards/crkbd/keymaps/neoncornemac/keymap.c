@@ -100,7 +100,7 @@ LCTL_T(KC_LABK), KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                      
         //  |--------+--------+--------+--------+--------+--------|     /* _SYMB */    |--------+--------+--------+--------+--------+--------|
         LSFT(KC_BSLS), KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC, KC_BSLS, XXXXXXX, KC_LEFT, KC_DOWN, KC_RIGHT, XXXXXXX, XXXXXXX,
         //  |--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-        XXXXXXX, XXXXXXX, CUT, COPY, PASTE, KC_PSCREEN, XXXXXXX, ALGR(KC_QUOTE), KC_GRV, ALGR(KC_BSLS), LSFT(KC_GRV), XXXXXXX,
+        XXXXXXX, XXXXXXX, CUT, COPY, PASTE, KC_PSCR,   XXXXXXX, ALGR(KC_QUOTE), KC_GRV, ALGR(KC_BSLS), LSFT(KC_GRV), XXXXXXX,
         //  '--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------'
         MT(KC_LCMD, KC_TAB), _______, KC_SPC, KC_ENT, MT(NUMP, KC_ENT), KC_ALGR
         //'----------------------------'  '---------------------------------'
@@ -225,8 +225,8 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 void led_set_user(uint8_t usb_led) {
     // con esta funcion se puede controlar el color de los LEDs al activar CAPSLOCK (bloq mayus)
-
-    if (usb_led & (1 << USB_LED_CAPS_LOCK)) { // si CAPSLOCK esta activado
+    (void)usb_led; // arg no usado; usar el estado consultado
+    if (host_keyboard_led_state().caps_lock) { // si CAPSLOCK esta activado
         rgblight_sethsv(18, 255, current_val);
         // color amarillo para los LEDs
         // valor Hue 18 entrega color amarillo
@@ -545,9 +545,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     tap_code16(KC_LABK);                      // <
                 }
             } else if (record->event.pressed) { // si hay hold
-                register_code16(KC_LCTRL);      // registrar CONTROL
+                register_code16(KC_LCTL);       // registrar CONTROL
             } else {                            // si keycode es liberada
-                unregister_code16(KC_LCTRL);    // unregister CONTROL
+                unregister_code16(KC_LCTL);     // unregister CONTROL
             }
             return false; // seria todo
 
